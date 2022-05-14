@@ -1,0 +1,45 @@
+package com.ajinmathew.json_view;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
+
+public class ScapyScan extends AppCompatActivity {
+
+    EditText ed1;
+    Button btn;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_scapy_scan);
+
+        ed1=(EditText) findViewById(R.id.host);
+        btn=(Button) findViewById(R.id.scan);
+
+        if (!Python.isStarted()){
+            Python.start(new AndroidPlatform(this));
+        }
+        Python py = Python.getInstance();
+        PyObject pyObject = py.getModule("synscan");
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String inp = ed1.getText().toString().trim();
+
+                PyObject pyObj = pyObject.callAttr("SynScan",inp);
+
+                Toast.makeText(getApplicationContext(), pyObj.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+}
